@@ -1,0 +1,109 @@
+swagger: "2.0"
+host: localhost
+basePath: /api
+schemes:
+  - http
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /books:
+    get:
+      description: Returns all books in the library
+      operationId: findBooks
+      responses:
+        "200":
+          description: book response
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Book'
+        default:
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    post:
+      description: Creates a new book in the library. Duplicates are allowed
+      operationId: addBook
+      parameters:
+        - name: book
+          in: body
+          description: Book to add to the library
+          required: true
+          schema:
+            $ref: '#/definitions/NewBook'
+      responses:
+        "200":
+          description: book response
+          schema:
+            $ref: '#/definitions/Book'
+        default:
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /books/{id}:
+    get:
+      description: Returns a book based on id
+      operationId: find book by id
+      parameters:
+        - name: id
+          in: path
+          description: id of book to fetch
+          required: true
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: book response
+          schema:
+            $ref: '#/definitions/Book'
+        default:
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    delete:
+      description: deletes a single book based on the id
+      operationId: deleteBook
+      parameters:
+        - name: id
+          in: path
+          description: id of book to delete
+          required: true
+          type: integer
+          format: int64
+      responses:
+        "204":
+          description: book deleted
+        default:
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+definitions:
+  Book:
+    allOf:
+      - $ref: '#/definitions/NewBook'
+      - required:
+          - id
+        properties:
+          id:
+            type: integer
+            format: int64
+  NewBook:
+    required:
+      - name
+    properties:
+      name:
+        type: string
+      tag:
+        type: string
+  Error:
+    required:
+      - code
+      - message
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
